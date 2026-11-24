@@ -1,0 +1,66 @@
+{
+ "rows": [
+  {
+   "kappa": 0.03,
+   "tail_last": NaN,
+   "valid": false,
+   "rate": null,
+   "window": null,
+   "final_ratio": Infinity,
+   "pred": null,
+   "pred_bounds": null,
+   "ratio": null
+  },
+  {
+   "kappa": 0.01,
+   "tail_last": 3.8327595825707977e-10,
+   "valid": true,
+   "rate": 0.3878004879610792,
+   "window": [
+    4.0,
+    10.0
+   ],
+   "final_ratio": 0.009873291189062603,
+   "pred": 0.2897790714386789,
+   "pred_bounds": {
+    "dirichlet": 0.48876040073141414,
+    "neumann": 0.1718058789505077
+   },
+   "ratio": 1.3382625806472117
+  },
+  {
+   "kappa": 0.0033,
+   "tail_last": 8.320394207549908e-07,
+   "valid": true,
+   "rate": 0.45646301603052647,
+   "window": [
+    6.0,
+    11.0
+   ],
+   "final_ratio": 0.010244105843518087,
+   "pred": 0.1885591322427784,
+   "pred_bounds": {
+    "dirichlet": 0.2651081529513257,
+    "neumann": 0.13411336451307654
+   },
+   "ratio": 2.420795060951011
+  },
+  {
+   "kappa": 0.0011,
+   "tail_last": 9.246136910025916e-06,
+   "valid": false,
+   "rate": 0.3126979235788636,
+   "window": [
+    8.5,
+    15.5
+   ],
+   "final_ratio": 0.008634465518356345,
+   "pred": null,
+   "pred_bounds": null,
+   "ratio": null
+  }
+ ],
+ "F1": "FAIL",
+ "F2": "INCONCLUSIVE",
+ "rule": "2: rate estimate falsified on the frozen real flow -> remove from guide"
+}

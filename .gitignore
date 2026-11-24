@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.npz
+*.out
+*.log
+*.aux
+*.pdf
+data/
+data_nu005/
+external/

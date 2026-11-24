@@ -1,0 +1,136 @@
+{
+ "F": [
+  {
+   "kappa": 0.03,
+   "tail_last": 2.1415523740726227e-11,
+   "valid": true,
+   "rate": 0.27768369564151796,
+   "window": [
+    1.5,
+    9.0
+   ],
+   "final_ratio": 0.005632240376161629,
+   "pred": 0.38317916566015725,
+   "pred_bounds": {
+    "dirichlet": 0.6737355410157871,
+    "neumann": 0.21792864418974411
+   },
+   "ratio": 0.7246837002818584
+  },
+  {
+   "kappa": 0.01,
+   "tail_last": 5.7113291621001563e-08,
+   "valid": true,
+   "rate": 0.38778352870764354,
+   "window": [
+    4.0,
+    10.0
+   ],
+   "final_ratio": 0.009873505084302103,
+   "pred": 0.2897790714382946,
+   "pred_bounds": {
+    "dirichlet": 0.4887604007308203,
+    "neumann": 0.17180587895026078
+   },
+   "ratio": 1.3382040558792319
+  },
+  {
+   "kappa": 0.0033,
+   "tail_last": 9.964571335728958e-06,
+   "valid": false,
+   "rate": 0.45633076793906463,
+   "window": [
+    6.0,
+    11.0
+   ],
+   "final_ratio": 0.0102569419289062,
+   "pred": null,
+   "pred_bounds": null,
+   "ratio": null
+  },
+  {
+   "kappa": 0.0011,
+   "tail_last": 4.485529283679901e-05,
+   "valid": false,
+   "rate": 0.30937191833015887,
+   "window": [
+    8.5,
+    15.5
+   ],
+   "final_ratio": 0.00895988906250932,
+   "pred": null,
+   "pred_bounds": null,
+   "ratio": null
+  }
+ ],
+ "S": [
+  {
+   "kappa": 0.03,
+   "tail_last": 1.2502339041904589e-12,
+   "valid": true,
+   "rate": 0.18705635995086484,
+   "window": [
+    1.5,
+    10.0
+   ],
+   "final_ratio": 0.045483492993758805,
+   "pred": 0.22761107834029806,
+   "pred_bounds": {
+    "dirichlet": 0.5655362329873053,
+    "neumann": 0.09160651424503197
+   },
+   "ratio": 0.8218244969218922
+  },
+  {
+   "kappa": 0.01,
+   "tail_last": 2.3824673382530923e-08,
+   "valid": true,
+   "rate": 0.2810591471675948,
+   "window": [
+    3.5,
+    10.0
+   ],
+   "final_ratio": 0.04968998875151445,
+   "pred": 0.15210609912416378,
+   "pred_bounds": {
+    "dirichlet": 0.21979880526549622,
+    "neumann": 0.10526110623223595
+   },
+   "ratio": 1.8477835457351843
+  },
+  {
+   "kappa": 0.0033,
+   "tail_last": 2.693087621213106e-05,
+   "valid": false,
+   "rate": 0.24087960217056836,
+   "window": [
+    5.5,
+    10.0
+   ],
+   "final_ratio": 0.08817879910650993,
+   "pred": null,
+   "pred_bounds": null,
+   "ratio": null
+  },
+  {
+   "kappa": 0.0011,
+   "tail_last": 0.0017896710471688928,
+   "valid": false,
+   "rate": 0.1795260132299175,
+   "window": [
+    8.5,
+    10.0
+   ],
+   "final_ratio": 0.22222826885299674,
+   "pred": null,
+   "pred_bounds": null,
+   "ratio": null
+  }
+ ],
+ "verdict": {
+  "F1": "PASS",
+  "F2": "INCONCLUSIVE",
+  "S1": "PASS",
+  "rule": "3: supported on this flow family only (one Reynolds number, one geometry)"
+ }
+}
