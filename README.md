@@ -30,7 +30,7 @@ python3 measured_vortex_test.py data.npz
 python3 measured_vortex_test.py --selftest
 ```
 
-See the [Practitioner Guide](https://doi.org/ZENODO_DOI_HERE) for which tool to use for which problem.
+See the [Practitioner Guide](https://doi.org/10.5281/zenodo.24498505) for which tool to use for which problem.
 
 ## Requirements
 
@@ -39,7 +39,7 @@ Python 3.9+, NumPy, SciPy.
 ## Simulation data
 
 The preregistered tests require simulation data files (~430 MB) not included in this repository.
-Download them from the Zenodo archive (DOI to be added) and unpack into `data/` and `data_nu005/`.
+Download them from the [Zenodo archive](https://doi.org/10.5281/zenodo.24498505) and unpack into `data/` and `data_nu005/`.
 
 ## Structure
 
