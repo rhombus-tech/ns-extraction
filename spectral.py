@@ -1,17 +1,22 @@
-"""Spectral helpers on the periodic box [0,2pi)^3: curl, Biot-Savart, strain, vorticity direction."""
+"""Spectral helpers on a periodic cubic box [0,L)^3: curl, Biot-Savart, strain, vorticity direction.
+
+Default L = 2*pi (integer wavenumbers).  Pass L explicitly for other box sizes.
+"""
 import numpy as np
 
 
 class Grid:
-    def __init__(self, n):
+    def __init__(self, n, L=2 * np.pi):
         self.n = n
-        self.x = np.arange(n) * (2 * np.pi / n)
-        k1 = np.fft.fftfreq(n, d=1.0 / n)
+        self.L = L
+        h = L / n
+        self.x = np.arange(n) * h
+        k1 = np.fft.fftfreq(n, d=h) * (2 * np.pi)
         self.kx, self.ky, self.kz = np.meshgrid(k1, k1, k1, indexing="ij")
         self.k = np.stack([self.kx, self.ky, self.kz])
         self.k2 = self.kx**2 + self.ky**2 + self.kz**2
         self.k2_safe = np.where(self.k2 == 0, 1.0, self.k2)
-        self.dV = (2 * np.pi / n) ** 3
+        self.dV = h ** 3
 
     def fft(self, f):
         return np.fft.fftn(f, axes=(-3, -2, -1))

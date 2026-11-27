@@ -5,7 +5,7 @@
 diagnose_axisymmetric(psi, rho, dr, dz, ...)  -> orbit decomposition, shear zeros, rate exponent
 diagnose_periodic_3d(u, nu)                   -> Euler deviation score, regularity-indicator map
 
-What these do NOT give you: a mixing-rate number. The exponent is known; the prefactor is not.
+With kappa, also returns a closed-form core decay RATE (core_mode); for a full-window rate, use true_rates.slowest_mode.
 """
 import sys
 import numpy as np
@@ -16,7 +16,7 @@ from spectral import Grid
 AXI_WARNINGS = [
     "Axisymmetric, no swirl, closed streamlines only; work in the frame where streamlines close (e.g. ring co-moving frame).",
     "delta-Omega is the vorticity-derived quantity Omega = omega_phi/rho. For a passive scalar the same exponent is expected but not proved.",
-    "The reported exponent is the scaling of the decay rate with diffusivity (kappa^p); the prefactor is NOT determined.",
+    "The reported exponent is the scaling of the decay rate with diffusivity (kappa^p); a closed-form core rate is given by core_mode, and a full-window rate by true_rates.slowest_mode.",
     "Treats the velocity as frozen (linearisation): valid for small delta-Omega and mixing faster than mean-flow evolution.",
 ]
 PERIODIC_WARNINGS = [
@@ -120,9 +120,10 @@ def diagnose_axisymmetric(psi, rho, dr, dz, omega_phi=None, level=None, mask=Non
     return out
 
 
-def diagnose_periodic_3d(u, nu):
+def diagnose_periodic_3d(u, nu, L=2 * np.pi):
+    """L: box side length (default 2*pi). Must match the domain your data lives on."""
     n = u.shape[-1]
-    g = Grid(n)
+    g = Grid(n, L=L)
     w = g.curl(u)
     S = g.strain_from_vorticity(w)
     ws = np.einsum("i...,ij...,j...->...", w, S, w)

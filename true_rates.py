@@ -22,8 +22,12 @@ def _setup(psi_co, omega_phi, rho, z, dr, dz, refine):
     core = np.unravel_index(np.argmax(np.abs(omega_phi)), omega_phi.shape)
     sign = -1.0 if psi_co[core] > 0 else 1.0
     spl = RectBivariateSpline(rho, z, psi_co, kx=3, ky=3)
-    rf = (np.arange(int(round(len(rho) * refine))) + 0.5) * dr / refine
-    zf = z[0] - dz / 2 + (np.arange(int(round(len(z) * refine))) + 0.5) * dz / refine
+    nrf = int(round(len(rho) * refine))
+    drf = dr / refine
+    rf = rho[0] - 0.5 * dr + (np.arange(nrf) + 0.5) * drf
+    nzf = int(round(len(z) * refine))
+    dzf = dz / refine
+    zf = z[0] - 0.5 * dz + (np.arange(nzf) + 0.5) * dzf
     pf = spl(rf, zf)
     lab = sign * pf
     R, Z = np.meshgrid(rf, zf, indexing="ij")

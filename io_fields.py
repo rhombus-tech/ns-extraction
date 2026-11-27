@@ -134,6 +134,38 @@ def read_vtk(path):
             dt = dtmap.get(r.token().lower(), np.float32)
             out["points"] = r.array(3 * n, dt, binary).reshape(n, 3)
             npts = n
+        elif tk == "CELL_DATA":
+            ncells = int(r.token())
+            # Skip cell-data attributes until we hit POINT_DATA or another section
+            while True:
+                saved = r.p
+                nxt = r.token()
+                if nxt == "" or nxt.upper() in ("POINT_DATA", "DIMENSIONS", "POINTS"):
+                    r.p = saved
+                    break
+                nxu = nxt.upper()
+                if nxu in ("SCALARS", "VECTORS", "NORMALS", "TENSORS", "FIELD"):
+                    _name = r.token()
+                    _dt = dtmap.get(r.token().lower(), np.float32)
+                    if nxu == "SCALARS":
+                        _nc = 1
+                        _nxt2 = r.token()
+                        if _nxt2.upper() == "LOOKUP_TABLE":
+                            r.token()
+                        else:
+                            try:
+                                _nc = int(_nxt2)
+                            except ValueError:
+                                pass
+                            _nxt3 = r.token()
+                            if _nxt3.upper() == "LOOKUP_TABLE":
+                                r.token()
+                        r.array(_nc * ncells, _dt, binary)
+                    elif nxu == "VECTORS" or nxu == "NORMALS":
+                        r.array(3 * ncells, _dt, binary)
+                    elif nxu == "TENSORS":
+                        r.array(9 * ncells, _dt, binary)
+                # else: unrecognised token inside CELL_DATA, skip
         elif tk == "POINT_DATA":
             npts = int(r.token())
         elif tk in ("VECTORS", "SCALARS"):
@@ -196,11 +228,10 @@ def sample_axisymmetric(u, h, center, rho_max, z_half, nrho=160, nz=320, nphi=24
     hh = (h,) * 3 if np.isscalar(h) else tuple(h)
     if w is None:
         w = fd3d.curl(u, hh, True)
-    n = u.shape[1]
     dr = rho_max / nrho
     dz = 2 * z_half / nz
     rho = (np.arange(nrho) + 0.5) * dr
-    zc = (hh[2] * n / 2 if z_center is None else z_center)
+    zc = (origin + hh[2] * u.shape[3] / 2 if z_center is None else z_center)
     zz = zc - z_half + (np.arange(nz) + 0.5) * dz
     phis = 2 * np.pi * np.arange(nphi) / nphi
     R, Z, P = np.meshgrid(rho, zz, phis, indexing="ij")
@@ -230,11 +261,10 @@ def sample_axisymmetric(u, h, center, rho_max, z_half, nrho=160, nz=320, nphi=24
 def sample_axisym_scalar(c, h, center, rho_max, z_half, nrho=120, nz=240, nphi=24, z_center=None, origin=0.0):
     """phi-average of a periodic 3D scalar on the same (rho,z) grid as sample_axisymmetric."""
     hh = (h,) * 3 if np.isscalar(h) else tuple(h)
-    n = c.shape[0]
     dr = rho_max / nrho
     dz = 2 * z_half / nz
     rho = (np.arange(nrho) + 0.5) * dr
-    zc = (hh[2] * n / 2 if z_center is None else z_center)
+    zc = (origin + hh[2] * c.shape[2] / 2 if z_center is None else z_center)
     zz = zc - z_half + (np.arange(nz) + 0.5) * dz
     phis = 2 * np.pi * np.arange(nphi) / nphi
     R, Z, P = np.meshgrid(rho, zz, phis, indexing="ij")

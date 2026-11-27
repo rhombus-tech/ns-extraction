@@ -58,6 +58,12 @@ Download them from the [Zenodo archive](https://doi.org/10.5281/zenodo.24498505)
 | `mv2003_test/` | Published-data comparison with Meunier & Villermaux (2003) |
 | `PREREGISTERED_*.md` | Preregistered criteria (hashed before any comparison) |
 
+## Changes after the Zenodo release
+
+Five files were fixed after the release: `io_fields.py` (z-window centre on non-cubic grids; VTK `CELL_DATA` blocks), `true_rates.py` (refined-grid extent when the input does not start at rho = 0), `fd3d.py` (face integrals averaged to the true cell face; weighted budget without 0/0 at vorticity zeros), `spectral.py` (box size `L`) and `diagnose.py` (docstrings, `L` passthrough).
+`orbits.py` and `sim_ns3d.py` are unchanged from the release, so their hashes in `PREREGISTERED_UNSTEADY_RING2.sha256` still verify.
+`io_fields.py` no longer matches its hash in that file: the hash records the release version, which is at commit `c612153`. Use that version to reproduce the preregistered ring-2 runs.
+
 ## Published-data comparison
 
 The `mv2003_test/` directory contains a preregistered comparison of the 2D operator

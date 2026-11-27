@@ -79,15 +79,25 @@ def integral(a, h, box):
 
 
 def face_integral(fn, h, box, axis, side):
-    """Integral over one face of the box of fn (3D array) -- plane index at the box edge."""
-    idx = [slice(None)] * 3
+    """Integral over one face of the box of fn (3D array), averaged to the true cell face."""
     sl = box[axis]
-    idx[axis] = sl.start if side < 0 else sl.stop - 1
+    # inner cell index: last cell inside the box on this side
+    inner = sl.start if side < 0 else sl.stop - 1
+    # outer cell index: first cell outside the box on this side
+    outer = inner + side
+    if not 0 <= outer < fn.shape[axis]:
+        outer = inner  # box touches the array edge: no outer cell, fall back to the inner value (no wrap-around)
+    idx_in = [slice(None)] * 3
+    idx_out = [slice(None)] * 3
+    idx_in[axis] = inner
+    idx_out[axis] = outer
     for a in range(3):
         if a != axis:
-            idx[a] = box[a]
+            idx_in[a] = box[a]
+            idx_out[a] = box[a]
     other = [h[a] for a in range(3) if a != axis]
-    return float(np.sum(fn[tuple(idx)]) * other[0] * other[1])
+    face_val = 0.5 * (fn[tuple(idx_in)] + fn[tuple(idx_out)])
+    return float(np.sum(face_val) * other[0] * other[1])
 
 
 def boundary_flux(u, q, h, box, nu, alpha):
@@ -139,8 +149,22 @@ def enstrophy_budget(u, h, nu, periodic=False, force=None, dudt=None, box=None):
 def weighted_budget(u, h, nu, alpha, periodic=False, force=None, dudt=None, box=None):
     q = Quantities(u, h, periodic)
     box = box or region(u.shape[1:], periodic)
-    stretch = integral(q.f ** (alpha + 1) * (q.whSwh - nu * q.rot), h, box)
-    rhs_visc = (1 + 2 * alpha) * nu * integral(q.f**alpha * np.sum(q.dmag * q.dmag, axis=0), h, box)
+    # Compute using well-defined products that avoid 0/0 at vorticity zeros:
+    #   f^(alpha+1) * hat{w}.S.hat{w} = f^alpha * w.S.w  (always exact)
+    #   f^alpha * |grad|w||^2 = f^(alpha-1) * sum_j (w.G_j)^2
+    # For alpha >= 1, f^(alpha-1) is safe.  For alpha = 0, use wG2/max(f, tiny)
+    # where wG2 <= f * |G|^2 (Cauchy-Schwarz), so the ratio is bounded.
+    fa_wSw = integral(q.f ** alpha * q.wSw, h, box)
+    G2 = np.sum(q.G * q.G, axis=(0, 1))
+    wG = np.einsum("i...,ij...->j...", q.w, q.G)
+    wG2 = np.sum(wG * wG, axis=0)
+    fa_G2 = integral(q.f ** alpha * G2, h, box)
+    if alpha >= 1:
+        fa_dmag2 = integral(q.f ** (alpha - 1) * wG2, h, box)
+    else:
+        fa_dmag2 = integral(q.f ** alpha * wG2 / np.maximum(q.f, 1e-30), h, box)
+    stretch = fa_wSw - nu * fa_G2 + nu * fa_dmag2
+    rhs_visc = (1 + 2 * alpha) * nu * fa_dmag2
     U = integral(q.f**alpha * np.sum(q.w * curl(dudt, h, periodic), axis=0), h, box) if dudt is not None else 0.0
     Fterm = integral(q.f**alpha * np.sum(q.w * curl(force, h, periodic), axis=0), h, box) if force is not None else 0.0
     B = 0.0 if periodic else boundary_flux(u, q, h, box, nu, alpha)
